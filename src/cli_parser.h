@@ -11,7 +11,7 @@ typedef struct
 } cliArgs;
 
 
-void about_app();
+void about_app(void);
 
 cliArgs cli_parser(int argc, char* argv[]);
 

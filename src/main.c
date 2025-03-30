@@ -8,7 +8,6 @@
 int main(int argc, char* argv[])
 {
     cliArgs cli = cli_parser(argc, argv);
-    printf("%s", cli.current_dir);
     struct dirent* dp;
     char* dir_file;
     DIR* dir = opendir(cli.current_dir);

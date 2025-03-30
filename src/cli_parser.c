@@ -5,13 +5,13 @@
 #include <stdlib.h>
 #include <limits.h>
 
-void about_app()
+void about_app(void)
 {
     printf("==============================\n");
     printf("| File manager by shewants   |\n");
     printf("| Version 0.0.1 - alfa       |\n");
     printf("==============================\n\n");
-    printf("Hi, this utiliti gives you simple function such as:\n");
+    printf("Hi, this tool gives you simple function such as:\n");
     printf("    - See all files in directory\n");
     printf("    - Create files in direcotory\n");
     printf("    - Copy and move files\n");
@@ -20,12 +20,17 @@ void about_app()
 
 cliArgs cli_parser(int argc, char* argv[]) 
 {
+    if (argc == NULL || argv == NULL)
+    {
+        fprintf(stderr, "No arguments were given.");
+    }
+
     cliArgs parsed = {0};
     parsed.current_dir = malloc(PATH_MAX);
 
     if (parsed.current_dir == NULL)
     {
-        printf("Memory allocation error.\n");
+        fprintf(stderr, "Memory allocation error.");
         exit(1);
     }
 
@@ -45,17 +50,22 @@ cliArgs cli_parser(int argc, char* argv[])
                 about_app();
                 exit(1);
             }
-            if (strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "--directory") == 0)
+            else if (strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "--directory") == 0)
             {
                 strcpy(parsed.current_dir, argv[i + 1]);
                 parsed.lname_flag = false;
                 i++;
             }
-            if (strcmp(argv[i], "-ld") == 0 || strcmp(argv[i], "--longdir") == 0)
+            else if (strcmp(argv[i], "-ld") == 0 || strcmp(argv[i], "--longdir") == 0)
             {
                 parsed.current_dir = argv[i + 1];
                 parsed.lname_flag = true;
                 i++;
+            }
+            else 
+            {
+                fprintf(stderr, "Tere is no arguments like %s", argv[i]);
+                exit(1);
             }
         }
     }

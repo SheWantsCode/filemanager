@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <getopt.h>
 
 void about_app(void)
 {
@@ -20,7 +21,8 @@ void about_app(void)
 
 cliArgs cli_parser(int argc, char* argv[]) 
 {
-    if (argc == NULL || argv == NULL)
+    int opt;
+    if (argc == 0 || argv == NULL)
     {
         fprintf(stderr, "No arguments were given.");
     }
@@ -43,29 +45,36 @@ cliArgs cli_parser(int argc, char* argv[])
     }
     else
     {
-        for (int i = 1; i < argc; i++)
+
+        struct option options[] = {
+            { "help", no_argument, 0, 'h' },
+            { "directory", required_argument, 0, 'd' },
+            { "longdir", required_argument, 0, 'l' },
+        };
+
+        opterr = 0;
+        while ((opt = getopt_long(argc, argv, "hd:l:", options, NULL)) != -1)
         {
-            if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
+            switch (opt)
             {
-                about_app();
-                exit(1);
-            }
-            else if (strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "--directory") == 0)
-            {
-                strcpy(parsed.current_dir, argv[i + 1]);
-                parsed.lname_flag = false;
-                i++;
-            }
-            else if (strcmp(argv[i], "-ld") == 0 || strcmp(argv[i], "--longdir") == 0)
-            {
-                parsed.current_dir = argv[i + 1];
-                parsed.lname_flag = true;
-                i++;
-            }
-            else 
-            {
-                fprintf(stderr, "Tere is no arguments like %s", argv[i]);
-                exit(1);
+                case 'h':
+                    about_app();
+                    exit(0);
+                case 'd':
+                    parsed.lname_flag = false;
+                    parsed.current_dir = optarg;
+                    break;
+                case 'l':
+                    parsed.lname_flag = true;
+                    parsed.current_dir = optarg;
+                    break;
+                case ':':
+                    // printf("Option need an argument");
+                    fprintf(stderr, "Missing argument.\n");
+                    exit(1);
+                case '?': 
+                    fprintf(stderr, "Unknown option.\n"); 
+                    exit(1);
             }
         }
     }

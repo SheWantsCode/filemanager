@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
 char* show_dir(char* path, char* file_name, bool lname_flag)
 {
@@ -13,7 +14,6 @@ char* show_dir(char* path, char* file_name, bool lname_flag)
     if (lname_flag)
     {
         full_path = malloc((path_len + file_len + 1 + 1) * sizeof *full_path);
-
         if (full_path == NULL)
         {
             fprintf(stderr, "Memory allocation error.");
@@ -21,12 +21,13 @@ char* show_dir(char* path, char* file_name, bool lname_flag)
         }
 
         strcpy(full_path, path);
-        for (int i = path_len + 1, j = 0; (i < path_len + file_len) && (j < file_len); i++, j++)
+        for (int i = path_len + 1, j = 0; (i < path_len + file_len + 1) && (j < file_len); i++, j++)
         {
             full_path[i] = file_name[j];
         }
         full_path[path_len] = '/';
-        full_path[path_len + file_len] = '\0';
+        full_path[path_len + file_len + 1] = '\0';
+
     }
     else
     {
@@ -44,4 +45,17 @@ char* show_dir(char* path, char* file_name, bool lname_flag)
 
     
     return full_path;
+}
+
+void print_perms(mode_t perms)
+{
+    printf( (perms & S_IRUSR) ? "r" : "-");
+    printf( (perms & S_IWUSR) ? "w" : "-");
+    printf( (perms & S_IXUSR) ? "x" : "-");
+    printf( (perms & S_IRGRP) ? "r" : "-");
+    printf( (perms & S_IWGRP) ? "w" : "-");
+    printf( (perms & S_IXGRP) ? "x" : "-");
+    printf( (perms & S_IROTH) ? "r" : "-");
+    printf( (perms & S_IWOTH) ? "w" : "-");
+    printf( (perms & S_IXOTH) ? "x" : "-");
 }

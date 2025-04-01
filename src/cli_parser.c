@@ -40,7 +40,7 @@ cliArgs cli_parser(int argc, char* argv[])
     {
         getcwd(parsed.current_dir, PATH_MAX);
         printf("No arguments. Use flag -h or --help for more information.\n");
-        printf("\nWorking directory - %s", parsed.current_dir);
+        printf("\nWorking directory - %s\n", parsed.current_dir);
         exit(1);
     }
     else

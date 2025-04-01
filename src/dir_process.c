@@ -47,6 +47,25 @@ char* show_dir(char* path, char* file_name, bool lname_flag)
     return full_path;
 }
 
+void make_path(cliArgs cliArgs, char* path, char** full_path)
+{
+    size_t path_len = strlen(cliArgs.current_dir);
+    size_t file_len = strlen(path);
+    *full_path = malloc((path_len + file_len + 1 + 1));
+    if (*full_path == NULL)
+    {
+        fprintf(stderr, "Memory allocation error.");
+        exit(1);
+    }
+    strcpy(*full_path, cliArgs.current_dir);
+    for (int i = path_len + 1, j = 0; (i < path_len + file_len + 1) && (j < file_len); i++, j++)
+    {
+        (*full_path)[i] = path[j];
+    }
+    (*full_path)[path_len] = '/';
+    (*full_path)[path_len + file_len + 1] = '\0';
+}
+
 void print_perms(mode_t perms)
 {
     printf( (perms & S_IRUSR) ? "r" : "-");

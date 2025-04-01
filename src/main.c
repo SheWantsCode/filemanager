@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <string.h>
 #include "cli_parser.h"
 #include "dir_process.h"
+#include <stdio.h>
+#include <string.h>
 #include <dirent.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -17,13 +17,20 @@ int main(int argc, char* argv[])
     struct dirent* dp;
     struct stat statbuf;
     char* dir_file;
+    char* full_path;
     DIR* dir = opendir(cli.current_dir);
     while ((dp = readdir(dir)))
     {
         if (strcmp(dp->d_name, ".") == 0 || strcmp(dp->d_name, "..") == 0)
             continue;
 
+        printf("-----------------\n");
+        make_path(cli, dp->d_name, &full_path);
+        printf("%s\n", full_path);
+        printf("-----------------\n\n");
+
         dir_file = show_dir(cli.current_dir, dp->d_name, cli.lname_flag);
+
         if (dp->d_type == DT_DIR)
         {
             printf(ANSI_COLOR_BLUE "%s\n" ANSI_COLOR_RESET, dir_file);

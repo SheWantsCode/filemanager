@@ -53,7 +53,7 @@ cliArgs cli_parser(int argc, char* argv[])
         };
 
         opterr = 0;
-        while ((opt = getopt_long(argc, argv, "hd:l:", options, NULL)) != -1)
+        while ((opt = getopt_long(argc, argv, "hd:l:p", options, NULL)) != -1)
         {
             switch (opt)
             {
@@ -63,10 +63,15 @@ cliArgs cli_parser(int argc, char* argv[])
                 case 'd':
                     parsed.lname_flag = false;
                     parsed.current_dir = optarg;
+                    parsed.perms_flag = false;
                     break;
                 case 'l':
                     parsed.lname_flag = true;
                     parsed.current_dir = optarg;
+                    parsed.perms_flag = false;
+                    break;
+                case 'p':
+                    parsed.perms_flag = true;
                     break;
                 case ':':
                     // printf("Option need an argument");

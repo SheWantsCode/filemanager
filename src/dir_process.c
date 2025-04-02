@@ -4,53 +4,13 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 
-char* show_dir(char* path, char* file_name, bool lname_flag)
-{
-    char* full_path;
-    size_t path_len = strlen(path);
-    size_t file_len = strlen(file_name);
-
-    if (lname_flag)
-    {
-        full_path = malloc((path_len + file_len + 1 + 1) * sizeof *full_path);
-        if (full_path == NULL)
-        {
-            fprintf(stderr, "Memory allocation error.");
-            exit(1);
-        }
-
-        strcpy(full_path, path);
-        for (int i = path_len + 1, j = 0; (i < path_len + file_len + 1) && (j < file_len); i++, j++)
-        {
-            full_path[i] = file_name[j];
-        }
-        full_path[path_len] = '/';
-        full_path[path_len + file_len + 1] = '\0';
-
-    }
-    else
-    {
-        full_path = malloc(file_len + 1);
-
-        if (full_path == NULL)
-        {
-            fprintf(stderr, "Memory allocation error.");
-            exit(1);
-        }
-
-        strcpy(full_path, file_name);
-        full_path[file_len] = '\0';
-    }
-
-    
-    return full_path;
-}
-
-void make_path(cliArgs cliArgs, char* path, char** full_path)
+void make_path(cliArgs cliArgs, char* file_name, char** full_path)
 {
     size_t path_len = strlen(cliArgs.current_dir);
-    size_t file_len = strlen(path);
+    size_t file_len = strlen(file_name);
     *full_path = malloc((path_len + file_len + 1 + 1));
     if (*full_path == NULL)
     {
@@ -60,10 +20,51 @@ void make_path(cliArgs cliArgs, char* path, char** full_path)
     strcpy(*full_path, cliArgs.current_dir);
     for (int i = path_len + 1, j = 0; (i < path_len + file_len + 1) && (j < file_len); i++, j++)
     {
-        (*full_path)[i] = path[j];
+        (*full_path)[i] = file_name[j];
     }
     (*full_path)[path_len] = '/';
     (*full_path)[path_len + file_len + 1] = '\0';
+}
+
+void cut_path(char** full_path, char* f_name)
+{
+    char* last_symbol = strrchr(*full_path, '/');
+    int full_len = strlen(*full_path);
+    int idx = last_symbol - (*full_path); // идекс откуда начинам
+    int diff_len = full_len - idx; // разница
+
+    for (int i = 0; i < diff_len; i++)
+    {
+        (*full_path)[i] = (*full_path)[i + idx];
+    }
+    (*full_path)[diff_len] = '\0';
+}
+
+void print_file(cliArgs cliArgs, struct dirent* dp, char* path)
+{
+    struct stat statbuf;
+    if (dp->d_type == DT_REG)
+    {
+        if (!cliArgs.lname_flag)
+        {
+            cut_path(&path, dp->d_name);
+        }
+        if (cliArgs.perms_flag)
+        {
+            stat(path, &statbuf);
+            print_perms(statbuf.st_mode);
+        }
+
+        printf("%s\n", path);
+    }
+    if (dp->d_type == DT_DIR)
+    {
+        if (!cliArgs.lname_flag)
+        {
+            cut_path(&path, dp->d_name);
+        }
+        printf(ANSI_COLOR_BLUE "%s\n" ANSI_COLOR_RESET, path);
+    }
 }
 
 void print_perms(mode_t perms)

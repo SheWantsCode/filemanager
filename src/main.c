@@ -17,6 +17,7 @@ int main(int argc, char* argv[])
     DIR* dir = opendir(cli.current_dir);
     while ((dp = readdir(dir)))
     {
+        // printf("%hu", dp->d_namlen);
         if (strcmp(dp->d_name, ".") == 0 || strcmp(dp->d_name, "..") == 0)
             continue;
 

@@ -8,6 +8,7 @@ typedef struct
     char* current_dir;
     bool lname_flag;
     bool perms_flag;
+    bool size_flag;
     int argc;
 } cliArgs;
 

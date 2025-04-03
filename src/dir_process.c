@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <math.h>
 
 void make_path(cliArgs cliArgs, char* file_name, char** full_path)
 {
@@ -42,17 +43,23 @@ void cut_path(char** full_path, char* f_name)
 
 void print_file(cliArgs cliArgs, struct dirent* dp, char* path)
 {
-    struct stat statbuf;
     if (dp->d_type == DT_REG)
     {
+        struct stat statbuf;
+        stat(path, &statbuf);
+        if (cliArgs.perms_flag)
+        {
+            print_perms(statbuf.st_mode);
+        }
+
+        if (cliArgs.size_flag)
+        {
+            printf(" %.4lfMb ", (float)statbuf.st_size / 1024.0 / 1024.0);
+        }
+
         if (!cliArgs.lname_flag)
         {
             cut_path(&path, dp->d_name);
-        }
-        if (cliArgs.perms_flag)
-        {
-            stat(path, &statbuf);
-            print_perms(statbuf.st_mode);
         }
 
         printf("%s\n", path);

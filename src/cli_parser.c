@@ -53,13 +53,16 @@ cliArgs cli_parser(int argc, char* argv[])
         };
 
         opterr = 0;
-        while ((opt = getopt_long(argc, argv, "hd:l:p", options, NULL)) != -1)
+        while ((opt = getopt_long(argc, argv, "hd:l:ps", options, NULL)) != -1)
         {
             switch (opt)
             {
                 case 'h':
                     about_app();
                     exit(0);
+                case 's':
+                    parsed.size_flag = true;
+                    break;
                 case 'd':
                     parsed.lname_flag = false;
                     parsed.current_dir = optarg;
